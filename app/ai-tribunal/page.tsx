@@ -29,25 +29,18 @@ export default function Page() {
 
 	const getLabel = (value: string) => modelOptions.find(opt => opt.value === value)?.label || value;
 
-	// Helper to call OpenRouter API for a model
-	async function callOpenRouter(model: string, messages: {role: string, content: string}[]) {
-		const apiKey = process.env.NEXT_PUBLIC_OPENROUTER_API_KEY || '';
-		const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				"Authorization": `Bearer ${apiKey}`,
-				"HTTP-Referer": "http://localhost",
-				"X-Title": "Kyrix Tribunal"
-			},
-			body: JSON.stringify({
-				model,
-				messages,
-				max_tokens: 512
-			})
+	// Helper to call the Next.js API route for all models
+	async function callModel(model: string, messages: {role: string, content: string}[]) {
+		// Send the last 8 messages as context (or all if less)
+		const context = messages.slice(-8);
+		const prompt = context.map(m => `${m.role === 'system' ? '[System]' : m.role === 'assistant' ? '[AI]' : '[User]'}: ${m.content}`).join('\n');
+		const res = await fetch('/api/llm-chat', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ query: prompt, modelA: model, modelB: model }),
 		});
 		const data = await res.json();
-		return data.choices?.[0]?.message?.content || "[No response]";
+		return data.results?.[model] || '[No response]';
 	}
 
 	// Debate logic
@@ -70,7 +63,7 @@ export default function Page() {
 			await new Promise(res => setTimeout(res, 800));
 			const promptA = turns === 0 ? `Present your first positive argument for: ${topic}` : `Respond to the previous negative point and add another positive argument.`;
 			messages.push({ role: "user", content: promptA + (lastB ? ` Previous negative: ${lastB}` : "") });
-			const pos = await callOpenRouter(modelA, messages);
+			const pos = await callModel(modelA, messages);
 			messages.push({ role: "assistant", content: pos });
 			debate.push({ role: "A", content: pos });
 			setChat([...debate]);
@@ -81,7 +74,7 @@ export default function Page() {
 			await new Promise(res => setTimeout(res, 800));
 			const promptB = turns === 0 ? `Present your first negative argument for: ${topic}` : `Respond to the previous positive point and add another negative argument.`;
 			negMessages.push({ role: "user", content: promptB + (lastA ? ` Previous positive: ${lastA}` : "") });
-			const neg = await callOpenRouter(modelB, negMessages);
+			const neg = await callModel(modelB, negMessages);
 			negMessages.push({ role: "assistant", content: neg });
 			debate.push({ role: "B", content: neg });
 			setChat([...debate]);
@@ -94,12 +87,12 @@ export default function Page() {
 			setChat([...debate, { role: "A", content: "..." }]);
 			await new Promise(res => setTimeout(res, 800));
 			messages.push({ role: "user", content: `Please provide a short conclusion for the positive side of the debate on: ${topic}` });
-			const posCon = await callOpenRouter(modelA, messages);
+			const posCon = await callModel(modelA, messages);
 			debate.push({ role: "A", content: `Conclusion: ${posCon}` });
 			setChat([...debate, { role: "B", content: "..." }]);
 			await new Promise(res => setTimeout(res, 800));
 			negMessages.push({ role: "user", content: `Please provide a short conclusion for the negative side of the debate on: ${topic}` });
-			const negCon = await callOpenRouter(modelB, negMessages);
+			const negCon = await callModel(modelB, negMessages);
 			debate.push({ role: "B", content: `Conclusion: ${negCon}` });
 			setChat([...debate]);
 		}
