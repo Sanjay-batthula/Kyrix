@@ -1,8 +1,47 @@
+import { useEffect, useState } from 'react'
+
 export default function HeroSection() {
+  const [isDark, setIsDark] = useState(false)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setIsDark(document.documentElement.classList.contains('dark'))
+      const observer = new MutationObserver(() => {
+        setIsDark(document.documentElement.classList.contains('dark'))
+      })
+      observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+      return () => observer.disconnect()
+    }
+  }, [])
+
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-background via-background to-accent/5 py-20 md:py-32">
+    <section className="relative overflow-hidden bg-gradient-to-b from-background via-background to-accent/5 pb-20 md:pb-32 -mt-16 md:-mt-20">
+      {/* Background video */}
+      {isDark ? (
+        <>
+          <video
+            className="absolute inset-0 w-full h-full object-cover z-0"
+            src="/darkmode.webm"
+            autoPlay
+            loop
+            muted
+            playsInline
+          />
+          {/* Blur overlay for dark mode */}
+          <div className="absolute inset-0 z-10 backdrop-blur-sm bg-black/20 pointer-events-none" />
+        </>
+      ) : (
+        <video
+          className="absolute inset-0 w-full h-full object-cover z-0"
+          src="/lightmode.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+        />
+      )}
       {/* Neural network background grid */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-10">
         <svg className="absolute w-full h-full opacity-[0.03] dark:opacity-[0.05]" viewBox="0 0 1200 600">
           <defs>
             <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
@@ -18,10 +57,10 @@ export default function HeroSection() {
       </div>
 
       {/* Glow orbs */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-primary/20 rounded-full blur-3xl -mr-48 -mt-48 dark:opacity-30 opacity-20 pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-accent/20 rounded-full blur-3xl -ml-48 -mb-48 dark:opacity-30 opacity-20 pointer-events-none" />
+      <div className="absolute top-0 right-0 w-96 h-96 bg-primary/20 rounded-full blur-3xl -mr-48 -mt-48 dark:opacity-30 opacity-20 pointer-events-none z-10" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-accent/20 rounded-full blur-3xl -ml-48 -mb-48 dark:opacity-30 opacity-20 pointer-events-none z-10" />
 
-      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div className="relative z-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-24 md:pt-32">
         
 
         <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
@@ -44,15 +83,6 @@ export default function HeroSection() {
             <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
           </button>
           
-        </div>
-
-        {/* Feature pills */}
-        <div className="flex flex-wrap gap-3 justify-center">
-          {['GPT-4', 'Claude 3', 'Gemini Pro', 'DeepSeek'].map((model) => (
-            <div key={model} className="px-4 py-2 rounded-full bg-card border border-border text-sm font-medium text-card-foreground backdrop-blur-sm">
-              {model}
-            </div>
-          ))}
         </div>
       </div>
     </section>
