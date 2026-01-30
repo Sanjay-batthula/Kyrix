@@ -38,6 +38,7 @@ export default function FeaturesSection() {
   const [index, setIndex] = useState(0)
   const [animating, setAnimating] = useState(false)
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const autoRef = useRef<NodeJS.Timeout | null>(null)
 
   const goTo = (newIndex: number) => {
     if (animating) return
@@ -47,9 +48,22 @@ export default function FeaturesSection() {
     timeoutRef.current = setTimeout(() => setAnimating(false), 600)
   }
 
+  // Auto-advance every 2 seconds
+  useEffect(() => {
+    if (autoRef.current) clearTimeout(autoRef.current)
+    autoRef.current = setTimeout(() => {
+      goTo(index + 1)
+    }, 2000)
+    return () => {
+      if (autoRef.current) clearTimeout(autoRef.current)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [index])
+
   useEffect(() => {
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current)
+      if (autoRef.current) clearTimeout(autoRef.current)
     }
   }, [])
 
