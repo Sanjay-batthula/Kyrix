@@ -24,7 +24,7 @@ const features = [
     icon: Share2,
     title: 'Replay & Share',
     description: 'Save, replay, and share AI comparison sessions.',
-    image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=600&q=80',
+    image: '/features/share.png',
   },
   {
     icon: ShieldCheck,
@@ -149,10 +149,10 @@ export default function FeaturesSection() {
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <h3 className="text-xl font-semibold mb-3 text-card-foreground text-center">
+                <h3 className="text-xl font-semibold mb-3 text-black dark:text-black text-center">
                   {feature.title}
                 </h3>
-                <p className="text-muted-foreground leading-relaxed text-center">
+                <p className="leading-relaxed text-center text-black dark:text-black">
                   {feature.description}
                 </p>
               </div>
