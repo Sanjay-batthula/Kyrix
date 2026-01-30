@@ -57,6 +57,23 @@ export default function Page() {
               <img src="/logo.png" alt="Logo" className="w-32 h-16" />
             </button>
           </div>
+          <div className="flex items-center gap-2 mt-6 ml-2">
+            {/* Tribunal symbol (scales of justice) inline SVG */}
+            <span className="ml-2" aria-label="Tribunal Symbol">
+              <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g stroke="#3a3a3a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="14" y1="4" x2="14" y2="22" />
+                  <line x1="7" y1="22" x2="21" y2="22" />
+                  <line x1="10" y1="7" x2="18" y2="7" />
+                  <path d="M10 7C8 11 6 16 10 16C14 16 12 11 10 7Z" fill="#fff"/>
+                  <path d="M18 7C20 11 22 16 18 16C14 16 16 11 18 7Z" fill="#fff"/>
+                  <circle cx="14" cy="4" r="1.5" fill="#fff"/>
+                </g>
+              </svg>
+            </span>
+            <span className="font-semibold text-lg">AI Tribunal</span>
+            
+          </div>
         </div>
       </aside>
 

@@ -68,7 +68,6 @@ export async function POST(req: NextRequest) {
   const { query, modelA, modelB } = await req.json();
   const results: Record<string, string> = {};
 
-
   // Load API keys from env
   const geminiKey = process.env.GEMINI_API_KEY;
   const openaiKey = process.env.OPENAI_API_KEY;
