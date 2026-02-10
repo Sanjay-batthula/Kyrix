@@ -3,7 +3,6 @@ import { useRouter } from 'next/router'
 
 export default function HeroSection() {
   const [isDark, setIsDark] = useState(false)
-  const router = useRouter();
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -82,7 +81,7 @@ export default function HeroSection() {
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
           <button
             className="group px-8 py-4 bg-gradient-to-r from-primary to-accent text-primary-foreground font-semibold rounded-lg hover:shadow-lg hover:shadow-primary/30 transition-all duration-300 hover:scale-105"
-            onClick={() => router.push('/playground')}
+            onClick={() => { window.location.href = '/playground'; }}
           >
             Enter the Playground
             <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
