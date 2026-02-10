@@ -61,12 +61,12 @@ export default function PlaygroundPage() {
 
     // State to track which quick questions to show
     const [quickIdx, setQuickIdx] = useState(0);
-    const getQuickSet = () => quickQuestions.slice(quickIdx, quickIdx + 3).length === 3
-      ? quickQuestions.slice(quickIdx, quickIdx + 3)
-      : quickQuestions.slice(quickIdx, quickIdx + 3).concat(quickQuestions.slice(0, 3 - quickQuestions.slice(quickIdx, quickIdx + 3).length));
+    const getQuickSet = () => quickQuestions.slice(quickIdx, quickIdx + 4).length === 4
+      ? quickQuestions.slice(quickIdx, quickIdx + 4)
+      : quickQuestions.slice(quickIdx, quickIdx + 4).concat(quickQuestions.slice(0, 4 - quickQuestions.slice(quickIdx, quickIdx + 4).length));
 
     // Advance quick question set
-    const advanceQuick = () => setQuickIdx((prev) => (prev + 3) % quickQuestions.length);
+    const advanceQuick = () => setQuickIdx((prev) => (prev + 4) % quickQuestions.length);
 
   // Helper to get label by value
   const getLabel = (value: string) => modelOptions.find(opt => opt.value === value)?.label || value;
@@ -137,7 +137,7 @@ export default function PlaygroundPage() {
         </div>
       </aside>
 
-      <main className="flex-1 flex flex-col items-center justify-center px-6">
+      <main className="flex-1 flex flex-col items-center justify-center px-6 ml-64">
         <h1 className="text-5xl font-serif mb-10 text-center">
           What would you like to do?
         </h1>
