@@ -1,11 +1,26 @@
 
 'use client'
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 
-export default function Page() {
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import NameModal from '../../components/name-modal';
+export default function PlaygroundPage() {
   const router = useRouter();
+  const [showNameModal, setShowNameModal] = useState(false);
+  const [userName, setUserName] = useState('');
+  const [modalName, setModalName] = useState('');
+
+  useEffect(() => {
+    const storedName = localStorage.getItem('userName');
+    if (!storedName) {
+      setShowNameModal(true);
+      setModalName('');
+    } else {
+      setUserName(storedName);
+      setModalName(storedName);
+    }
+  }, []);
   // Model options (can be extended)
   const modelOptions = [
     { label: 'OpenAI GPT-4', value: 'openai-gpt4' },
@@ -13,7 +28,6 @@ export default function Page() {
     { label: 'Grok', value: 'grok' },
     { label: 'Anthropic Claude', value: 'claude' },
   ];
-
 
   const [modelA, setModelA] = useState(modelOptions[0].value);
   const [modelB, setModelB] = useState(modelOptions[1].value);
@@ -23,6 +37,36 @@ export default function Page() {
     query: string;
     responses: Record<string, string>;
   }>>([]);
+
+    // All available quick questions
+    const quickQuestions = [
+      "what is ai",
+      "difference between ai and ml",
+      "will ai replace human?",
+      "how does ai learn?",
+      "can ai be creative?",
+      "what are ai limitations?",
+      "is ai expensive?",
+      "can ai make mistakes?",
+      "how is ai used in healthcare?",
+      "can ai improve productivity?",
+      "is ai safe?",
+      "can ai help climate change?",
+      "how does ai affect society?",
+      "analyze impact of ai on future employment",
+      "is ai threat to data -privacy",
+      "should ai be used in education",
+      "how to build a project"
+    ];
+
+    // State to track which quick questions to show
+    const [quickIdx, setQuickIdx] = useState(0);
+    const getQuickSet = () => quickQuestions.slice(quickIdx, quickIdx + 3).length === 3
+      ? quickQuestions.slice(quickIdx, quickIdx + 3)
+      : quickQuestions.slice(quickIdx, quickIdx + 3).concat(quickQuestions.slice(0, 3 - quickQuestions.slice(quickIdx, quickIdx + 3).length));
+
+    // Advance quick question set
+    const advanceQuick = () => setQuickIdx((prev) => (prev + 3) % quickQuestions.length);
 
   // Helper to get label by value
   const getLabel = (value: string) => modelOptions.find(opt => opt.value === value)?.label || value;
@@ -46,8 +90,24 @@ export default function Page() {
     setLoading(false);
   }
 
+  // Handler for saving name from modal
+  const handleNameSave = () => {
+    localStorage.setItem('userName', modalName);
+    setUserName(modalName);
+    setShowNameModal(false);
+  };
+
   return (
     <>
+      {showNameModal && (
+        <NameModal
+          open={showNameModal}
+          name={modalName}
+          setName={setModalName}
+          onSave={handleNameSave}
+        />
+      )}
+      {/* ...existing code... */}
       <div className="min-h-screen w-full flex bg-[#faf9f7] text-[#3a3a3a]">
       <aside className="w-64 border-r border-[#e5e5e5] flex flex-col justify-between fixed left-0 top-0 h-full z-10 bg-[#faf9f7]">
         {/* ...existing code... */}
@@ -159,6 +219,34 @@ export default function Page() {
                   </div>
                 </div>
               </div>
+            ))}
+          </div>
+          {/* Quick question options */}
+          <div className="flex gap-3 mt-2 mb-2">
+            {getQuickSet().map((q, idx) => (
+              <button
+                key={idx}
+                className="px-4 py-2 rounded-lg bg-[#e5e5e5] hover:bg-[#d4d4d4] text-sm font-medium focus:outline-none"
+                onClick={async () => {
+                  setLoading(true);
+                  try {
+                    const res = await fetch('/api/llm-chat', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ query: q, modelA, modelB }),
+                    });
+                    const data = await res.json();
+                    setChat(prev => [...prev, { query: q, responses: data.results }]);
+                  } catch (e) {
+                    setChat(prev => [...prev, { query: q, responses: { [modelA]: 'Error', [modelB]: 'Error' } }]);
+                  }
+                  setLoading(false);
+                  advanceQuick();
+                }}
+                disabled={loading}
+              >
+                {q.charAt(0).toUpperCase() + q.slice(1)}
+              </button>
             ))}
           </div>
           {/* Input box */}

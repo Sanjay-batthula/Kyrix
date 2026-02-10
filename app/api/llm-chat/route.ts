@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getMockResponse } from '../../../lib/mockQA';
 
 export const runtime = 'edge';
 
@@ -68,30 +69,13 @@ export async function POST(req: NextRequest) {
   const { query, modelA, modelB } = await req.json();
   const results: Record<string, string> = {};
 
-  // Load API keys from env
-  const geminiKey = process.env.GEMINI_API_KEY;
-  const openaiKey = process.env.OPENAI_API_KEY;
-  const openrouterKey = process.env.OPENROUTER_API_KEY;
 
-  // Model map
+  // For now, use a default name (can be extended to fetch from user/session)
+  const name = 'User';
+  const hour = new Date().getHours();
 
-  // Map UI model values to backend fetchers
-  const modelMap: Record<string, (query: string) => Promise<string>> = {
-    'gemini': (q) => fetchGemini(q, geminiKey!),
-    'openai-gpt4': (q) => fetchOpenRouter(q, openrouterKey!, 'openai/gpt-4'),
-    'grok': (q) => fetchOpenRouter(q, openrouterKey!, 'xai/grok-1'),
-    'claude': (q) => fetchOpenRouter(q, openrouterKey!, 'anthropic/claude-3-opus'),
-    // Add more here
-  };
-
-  // Fetch both responses in parallel
-  const [resA, resB] = await Promise.all([
-    modelMap[modelA]?.(query) ?? Promise.resolve('Model not supported'),
-    modelMap[modelB]?.(query) ?? Promise.resolve('Model not supported'),
-  ]);
-
-  results[modelA] = resA;
-  results[modelB] = resB;
+  results[modelA] = getMockResponse(query.trim().toLowerCase(), modelA, name, hour);
+  results[modelB] = getMockResponse(query.trim().toLowerCase(), modelB, name, hour);
 
   return NextResponse.json({ results });
 }
