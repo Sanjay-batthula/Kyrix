@@ -131,9 +131,24 @@ export default function PlaygroundPage() {
                 </g>
               </svg>
             </span>
+            
             <span className="font-semibold text-lg">AI Tribunal</span>
             
           </div>
+          <div className="flex items-center gap-2 mt-6 ml-2">
+  <span className="ml-2" aria-label="Cipherlink Symbol">
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g stroke="#3a3a3a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="14" cy="14" r="3" />
+        <path d="M4 14C6 9 10 6 14 6C18 6 22 9 24 14" />
+        <path d="M4 14C6 19 10 22 14 22C18 22 22 19 24 14" />
+        <rect x="11" y="11" width="6" height="6" rx="1" fill="#fff"/>
+      </g>
+    </svg>
+  </span>
+
+  <span className="font-semibold text-lg">Cipherlink</span>
+</div>
         </div>
       </aside>
 
