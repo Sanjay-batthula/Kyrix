@@ -387,3 +387,20 @@ export function Composer({ onSend, onStop, isStreaming, disabled, selectedModel,
     </div>
   )
 }
+
+// Simple ModelSelector for use in ChatShell and elsewhere
+export function ModelSelector({ value, onChange, disabled }: { value: AIModel; onChange: (model: AIModel) => void; disabled?: boolean }) {
+  return (
+    <select
+      value={value}
+      onChange={e => onChange(e.target.value as AIModel)}
+      disabled={disabled}
+      className="border rounded-lg px-2 py-1 text-sm bg-white text-stone-800"
+      aria-label="Select AI model"
+    >
+      {AI_MODELS.map(model => (
+        <option key={model.id} value={model.id}>{model.name}</option>
+      ))}
+    </select>
+  )
+}
